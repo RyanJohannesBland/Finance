@@ -10,3 +10,4 @@ Backend:
 Frontend:
 2. docker run -it -p 8080:8080 -v "$(PWD)":/app node:16 bash
 3. npm install -g @vue/cli
+4.
