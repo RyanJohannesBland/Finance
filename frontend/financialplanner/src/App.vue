@@ -24,7 +24,7 @@
     </v-navigation-drawer>
     <v-main>
       <v-container fluid fill-height class="pa-0 ma-0">
-        <router-view></router-view>
+        <router-view class="background:#03f431"></router-view>
       </v-container>
     </v-main>
   </v-app>
