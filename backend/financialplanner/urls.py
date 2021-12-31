@@ -6,6 +6,7 @@ from financialplanner.budget import views
 
 router = routers.DefaultRouter()
 router.register(r'categories', views.CategoryViewSet)
+router.register(r'transactions', views.TransactionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

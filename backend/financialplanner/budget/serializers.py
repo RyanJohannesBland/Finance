@@ -11,10 +11,10 @@ class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Category
-        fields = ["name", "subcategory", "allowance", "sum"]
+        fields = ["name", "subcategory", "allowance", "balance"]
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Transaction
-        fields = ["category", "amount"]
+        fields = ["category", "amount", "date"]
