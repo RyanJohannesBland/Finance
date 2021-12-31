@@ -34,23 +34,24 @@
                         ></v-text-field>
                       </v-col>
                       <v-col>
-                        <v-text-field
+                        <v-select
                           v-model="editedTransaction.category"
                           label="Category"
-                        ></v-text-field>
+                          :items="categories"
+                          item-text="name"
+                          item-value="name"
+                        ></v-select>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col>
                         <v-text-field
-                          v-model="editedTransaction.spent"
-                          label="Spent"
+                          v-model="editedTransaction.amount"
+                          label="Amount"
                         ></v-text-field>
                       </v-col>
                       <v-col>
-                        <v-btn @click="editedTransaction = {}" color="red">
-                          Delete
-                        </v-btn>
+                        <v-btn @click="deleteItem" color="red"> Delete </v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -67,9 +68,9 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template v-slot:item.spent="{ item }">
+        <template v-slot:item.amount="{ item }">
           <v-chip :color="getColor(item)" dark>
-            {{ item.spent }}
+            {{ item.amount }}
           </v-chip>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -91,53 +92,18 @@ export default {
       headers: [
         { text: "Date", value: "date" },
         { text: "Categories", value: "category" },
-        { text: "Spent", value: "spent" },
+        { text: "Amount", value: "amount" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      transactions: [
-        {
-          category: "Gas",
-          date: "12/10/2021",
-          spent: -225,
-        },
-        {
-          category: "Salary",
-          date: "12/12/2021",
-          spent: 235,
-        },
-        {
-          category: "Auto Maintenance",
-          date: "12/14/2021",
-          spent: -16.0,
-        },
-        {
-          category: "Groceries",
-          date: "12/15/2021",
-          spent: -145,
-        },
-        {
-          category: "Phone Bill",
-          date: "12/15/2021",
-          spent: -65,
-        },
-        {
-          category: "Experiences",
-          date: "12/19/201",
-          spent: -100,
-        },
-        {
-          category: "Pocket Change",
-          date: "12/19/2021",
-          spent: 0.2,
-        },
-      ],
+      transactions: [],
+      categories: [],
       editedTransaction: {},
       editedIndex: -1,
     };
   },
   methods: {
     getColor(category) {
-      if (category.spent > 0) return "green";
+      if (category.amount > 0) return "green";
       else return "red";
     },
     createItem() {
@@ -152,21 +118,69 @@ export default {
       this.dialogHeader = "Edit Transaction";
       this.dialog = true;
     },
+    deleteItem() {
+      this.editedTransaction = { id: this.editedTransaction.id };
+    },
     saveItem() {
+      // Create new transaction.
       if (this.editedIndex == -1) {
-        this.transactions.push(this.editedTransaction);
-      } else {
-        if (!this.editedTransaction.spent) {
-          this.transactions.splice(this.editedIndex, 1);
-        } else {
-          Object.assign(
-            this.transactions[this.editedIndex],
-            this.editedTransaction
-          );
+        this.$api
+          .post("transactions/", this.editedTransaction)
+          .then(() => {
+            this.refreshData();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+      // Delete a transaction.
+      else {
+        if (!this.editedTransaction.amount) {
+          this.$api
+            .delete("transactions/" + this.editedTransaction.id + "/")
+            .then(() => {
+              this.refreshData();
+            });
+        }
+        // Edit a transaction.
+        else {
+          this.$api
+            .put(
+              "transactions/" + this.editedTransaction.id + "/",
+              this.editedTransaction
+            )
+            .then(() => {
+              this.refreshData();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
       }
       this.dialog = false;
     },
+    refreshData() {
+      this.$api
+        .get("transactions")
+        .then((response) => {
+          this.transactions = response.data;
+        })
+        .catch((error) => {
+          console.log(error.data);
+        });
+    },
+  },
+  beforeMount: function () {
+    // Grab Transactions and Categories on load.
+    this.$api
+      .get("categories")
+      .then((response) => {
+        this.categories = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    this.refreshData();
   },
 };
 </script>

@@ -18,7 +18,7 @@ services:
       - "8080:8080"
     volumes:
       - .:/app
-    command: bash -c "cd /app/frontend/financialplanner && npm install -g @vue/cli && npm run serve"
+    command: bash -c "cd /app/frontend/financialplanner && npm install && npm install -g @vue/cli && npm run serve"
 
 networks:
   local:
