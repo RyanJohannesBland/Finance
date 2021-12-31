@@ -17,4 +17,4 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Transaction
-        fields = ["category", "amount", "date"]
+        fields = ["id", "date", "category", "amount"]
