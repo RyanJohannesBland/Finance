@@ -1,19 +1,32 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-data-table :headers="headers" :items="desserts" dark>
+      <data-table
+        :headers="headers"
+        :items="categories"
+        itemType="Budget Category"
+        :vSelects="subcategories"
+        @post="postItem"
+        @put="putItem"
+        @delete="deleteItem"
+      >
         <template v-slot:item.spent="{ item }">
           <v-chip :color="getColor(item)" dark>
             {{ item.spent }}
           </v-chip>
         </template>
-      </v-data-table>
+      </data-table>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import dataTable from "@/components/data-table.vue";
+
 export default {
+  components: {
+    "data-table": dataTable,
+  },
   data() {
     return {
       headers: [
@@ -22,54 +35,14 @@ export default {
           align: "start",
           value: "name",
         },
+        { text: "Subcategory", value: "subcategory" },
         { text: "Budget", value: "allowance" },
         { text: "This Month", value: "spent" },
-        { text: "Remaining", value: "sum" },
+        { text: "Remaining", value: "balance" },
+        { text: "Edit", value: "actions", sortable: false },
       ],
-      desserts: [
-        {
-          name: "Gas",
-          allowance: 200,
-          spent: 225,
-          sum: 24,
-        },
-        {
-          name: "Auto Insurance",
-          allowance: 235,
-          spent: 235,
-          sum: 37,
-        },
-        {
-          name: "Auto Maintenance",
-          allowance: 200,
-          spent: 16.0,
-          sum: 23,
-        },
-        {
-          name: "Groceries",
-          allowance: 150,
-          spent: 145,
-          sum: 67,
-        },
-        {
-          name: "Phone Bill",
-          allowance: 65,
-          spent: 65,
-          sum: 49,
-        },
-        {
-          name: "Experiences",
-          allowance: 375,
-          spent: 0.0,
-          sum: 94,
-        },
-        {
-          name: "Things",
-          allowance: 100,
-          spent: 0.2,
-          sum: 98,
-        },
-      ],
+      categories: [],
+      subcategories: [],
     };
   },
   methods: {
@@ -78,6 +51,59 @@ export default {
       else if (category.spent / category.allowance > 0.85) return "orange";
       else return "green";
     },
+    postItem(item) {
+      this.$api
+        .post("categories", item)
+        .then(() => {
+          this.refreshData();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    putItem(item) {
+      this.$api
+        .put("categories/" + item.name, item)
+        .then(() => {
+          this.refreshData();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    deleteItem(item) {
+      this.$api
+        .delete("categories/" + item.name)
+        .then(() => {
+          this.refreshData();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    refreshData() {
+      this.$api
+        .get("categories")
+        .then((response) => {
+          this.categories = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
+  beforeMount: function () {
+    this.refreshData();
+    this.$api
+      .get("subcategories")
+      .then((response) => {
+        this.subcategories = {
+          subcategory: { pk: "name", options: response.data },
+        };
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 </script>

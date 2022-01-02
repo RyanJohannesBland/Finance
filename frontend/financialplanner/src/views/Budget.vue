@@ -15,6 +15,11 @@
           <monthly-budget></monthly-budget>
         </v-container>
       </v-tab-item>
+      <v-tab-item>
+        <v-container>
+          <income></income>
+        </v-container>
+      </v-tab-item>
     </v-tabs>
   </v-row>
 </template>
@@ -22,11 +27,13 @@
 <script>
 import transactions from "@/components/budget/transactions.vue";
 import monthlyBudget from "@/components/budget/monthly-budget.vue";
+import income from "@/components/budget/income.vue";
 
 export default {
   components: {
     transactions: transactions,
     "monthly-budget": monthlyBudget,
+    income: income,
   },
   data: function () {
     return {
@@ -40,6 +47,11 @@ export default {
           name: "Monthly Budget",
           icon: "mdi-aspect-ratio",
           id: 1,
+        },
+        {
+          name: "Income Statistics",
+          icon: "mdi-aspect-ratio",
+          id: 2,
         },
       ],
     };

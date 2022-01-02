@@ -8,6 +8,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CategorySerializer
 
 
+class SubCategoryViewSet(viewsets.ModelViewSet):
+    queryset = models.SubCategory.objects.all()
+    serializer_class = serializers.SubCategorySerializer
+
+
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = models.Transaction.objects.all().order_by("date")
     serializer_class = serializers.TransactionSerializer
