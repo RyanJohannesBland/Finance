@@ -28,15 +28,9 @@
                   {{ itemType }} Editor
                 </v-card-title>
                 <v-card-text>
-                  <v-container v-if="items.length">
+                  <v-container>
                     <v-row>
-                      <v-col
-                        cols="6"
-                        v-for="(key, i) of Object.keys(items[0]).filter(
-                          (item) => item !== 'id'
-                        )"
-                        :key="i"
-                      >
+                      <v-col cols="6" v-for="key of fields" :key="key">
                         <v-select
                           v-if="key in vSelects"
                           v-model="selectedItem[key]"
@@ -131,6 +125,7 @@ export default {
       deleteDialog: false,
       selectedItem: {},
       editingMode: "create",
+      fields: [],
     };
   },
 
@@ -159,6 +154,7 @@ export default {
     },
   },
   mounted: function () {
+    this.fields = this.headers.filter((e) => !e.ignore).map((e) => e.value);
     // Raise exceptions in mounted?
     // All items need to have the same fields.
     // Headers should always contain the "Actions" header.

@@ -15,6 +15,35 @@
             {{ item.spent }}
           </v-chip>
         </template>
+        <template v-slot:footer>
+          <v-toolbar flat>
+            <v-dialog v-model="dialog" max-width="500px">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  light
+                  class="mb-2"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="dialog = true"
+                >
+                  New Subcategory
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title>Create New Subcategory</v-card-title>
+                <v-card-text>
+                  <v-text-field
+                    v-model="subcategoryName"
+                    label="Name"
+                  ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn @click="createSubcategory">Create</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
       </data-table>
     </v-row>
   </v-container>
@@ -37,12 +66,14 @@ export default {
         },
         { text: "Subcategory", value: "subcategory" },
         { text: "Budget", value: "allowance" },
-        { text: "This Month", value: "spent" },
+        { text: "This Month", value: "spent", ignore: true },
         { text: "Remaining", value: "balance" },
-        { text: "Edit", value: "actions", sortable: false },
+        { text: "Edit", value: "actions", sortable: false, ignore: true },
       ],
       categories: [],
       subcategories: [],
+      subcategoryName: "",
+      dialog: false,
     };
   },
   methods: {
@@ -53,9 +84,9 @@ export default {
     },
     postItem(item) {
       this.$api
-        .post("categories", item)
+        .post("categories/", item)
         .then(() => {
-          this.refreshData();
+          this.refreshCategories();
         })
         .catch((error) => {
           console.log(error);
@@ -63,9 +94,9 @@ export default {
     },
     putItem(item) {
       this.$api
-        .put("categories/" + item.name, item)
+        .put("categories/" + item.name + "/", item)
         .then(() => {
-          this.refreshData();
+          this.refreshCategories();
         })
         .catch((error) => {
           console.log(error);
@@ -75,13 +106,13 @@ export default {
       this.$api
         .delete("categories/" + item.name)
         .then(() => {
-          this.refreshData();
+          this.refreshCategories();
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    refreshData() {
+    refreshCategories() {
       this.$api
         .get("categories")
         .then((response) => {
@@ -91,19 +122,31 @@ export default {
           console.log(error);
         });
     },
+    refreshSubcategories() {
+      this.$api
+        .get("subcategories")
+        .then((response) => {
+          this.subcategories = {
+            subcategory: { pk: "name", options: response.data },
+          };
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    createSubcategory() {
+      this.$api
+        .post("subcategories/", { name: this.subcategoryName })
+        .then(() => {
+          this.refreshSubcategories();
+          this.dialog = false;
+        })
+        .catch((error) => console.log(error));
+    },
   },
   beforeMount: function () {
-    this.refreshData();
-    this.$api
-      .get("subcategories")
-      .then((response) => {
-        this.subcategories = {
-          subcategory: { pk: "name", options: response.data },
-        };
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.refreshCategories();
+    this.refreshSubcategories();
   },
 };
 </script>

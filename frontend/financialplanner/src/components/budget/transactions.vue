@@ -30,7 +30,7 @@ export default {
         { text: "Date", value: "date" },
         { text: "Categories", value: "category" },
         { text: "Amount", value: "amount" },
-        { text: "Actions", value: "actions", sortable: false },
+        { text: "Actions", value: "actions", sortable: false, ignore: true },
       ],
       transactions: [],
       categories: [],
