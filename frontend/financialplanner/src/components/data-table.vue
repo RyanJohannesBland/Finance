@@ -38,7 +38,8 @@
                           :items="vSelects[key].options"
                           :item-text="vSelects[key].pk"
                           :item-value="vSelects[key].pk"
-                        ></v-select>
+                        >
+                        </v-select>
                         <v-text-field
                           v-else
                           v-model="selectedItem[key]"
@@ -46,31 +47,6 @@
                         ></v-text-field>
                       </v-col>
                     </v-row>
-                    <!-- <v-row>
-                      <v-col>
-                        <v-text-field
-                          v-model="selectedItem"
-                          label="Date"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col>
-                        <v-select
-                          v-model="editedTransaction.category"
-                          label="Category"
-                          :items="categories"
-                          item-text="name"
-                          item-value="name"
-                        ></v-select>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col>
-                        <v-text-field
-                          v-model="editedTransaction.amount"
-                          label="Amount"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row> -->
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
