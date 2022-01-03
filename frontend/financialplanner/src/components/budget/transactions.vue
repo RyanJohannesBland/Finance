@@ -46,6 +46,7 @@ export default {
         .post("transactions/", item)
         .then(() => {
           this.refreshData();
+          this.$emit("reload");
         })
         .catch((error) => {
           console.log(error);
@@ -56,6 +57,7 @@ export default {
         .put("transactions/" + item.id + "/", item)
         .then(() => {
           this.refreshData();
+          this.$emit("reload");
         })
         .catch((error) => {
           console.log(error);
@@ -64,6 +66,7 @@ export default {
     deleteItem(item) {
       this.$api.delete("transactions/" + item.id + "/").then(() => {
         this.refreshData();
+        this.$emit("reload");
       });
     },
     refreshData() {
