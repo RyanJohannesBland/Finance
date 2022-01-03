@@ -21,6 +21,7 @@
 <script>
 import dataTable from "@/components/data-table.vue";
 export default {
+  props: ["categories"],
   components: {
     "data-table": dataTable,
   },
@@ -33,7 +34,6 @@ export default {
         { text: "Actions", value: "actions", sortable: false, ignore: true },
       ],
       transactions: [],
-      categories: [],
     };
   },
   methods: {
@@ -78,15 +78,6 @@ export default {
     },
   },
   beforeMount: function () {
-    // Grab Transactions and Categories on load.
-    this.$api
-      .get("categories")
-      .then((response) => {
-        this.categories = { category: { pk: "name", options: response.data } };
-      })
-      .catch((error) => {
-        console.log(error);
-      });
     this.refreshData();
   },
 };

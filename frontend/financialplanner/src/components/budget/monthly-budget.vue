@@ -53,6 +53,7 @@
 import dataTable from "@/components/data-table.vue";
 
 export default {
+  props: ["categories", "subcategories"],
   components: {
     "data-table": dataTable,
   },
@@ -70,8 +71,6 @@ export default {
         { text: "Remaining", value: "balance" },
         { text: "Edit", value: "actions", sortable: false, ignore: true },
       ],
-      categories: [],
-      subcategories: [],
       subcategoryName: "",
       dialog: false,
     };
@@ -86,7 +85,7 @@ export default {
       this.$api
         .post("categories/", item)
         .then(() => {
-          this.refreshCategories();
+          this.$emit("reload");
         })
         .catch((error) => {
           console.log(error);
@@ -96,7 +95,7 @@ export default {
       this.$api
         .put("categories/" + item.name + "/", item)
         .then(() => {
-          this.refreshCategories();
+          this.$emit("reload");
         })
         .catch((error) => {
           console.log(error);
@@ -106,47 +105,21 @@ export default {
       this.$api
         .delete("categories/" + item.name)
         .then(() => {
-          this.refreshCategories();
+          this.$emit("reload");
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    refreshCategories() {
-      this.$api
-        .get("categories")
-        .then((response) => {
-          this.categories = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    refreshSubcategories() {
-      this.$api
-        .get("subcategories")
-        .then((response) => {
-          this.subcategories = {
-            subcategory: { pk: "name", options: response.data },
-          };
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    createSubcategory() {
+    createSubcategory: async function () {
       this.$api
         .post("subcategories/", { name: this.subcategoryName })
         .then(() => {
-          this.refreshSubcategories();
+          this.$emit("reload");
           this.dialog = false;
         })
         .catch((error) => console.log(error));
     },
-  },
-  beforeMount: function () {
-    this.refreshCategories();
-    this.refreshSubcategories();
   },
 };
 </script>
