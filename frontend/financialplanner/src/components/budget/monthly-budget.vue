@@ -85,6 +85,7 @@ export default {
       this.$api
         .post("categories/", item)
         .then(() => {
+          console.log("Emitted reload");
           this.$emit("reload");
         })
         .catch((error) => {
@@ -111,7 +112,7 @@ export default {
           console.log(error);
         });
     },
-    createSubcategory: async function () {
+    createSubcategory: function () {
       this.$api
         .post("subcategories/", { name: this.subcategoryName })
         .then(() => {

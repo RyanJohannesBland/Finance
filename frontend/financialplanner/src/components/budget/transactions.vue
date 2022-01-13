@@ -21,7 +21,7 @@
 <script>
 import dataTable from "@/components/data-table.vue";
 export default {
-  props: ["categories"],
+  props: ["transactions", "categories"],
   components: {
     "data-table": dataTable,
   },
@@ -33,7 +33,6 @@ export default {
         { text: "Amount", value: "amount" },
         { text: "Actions", value: "actions", sortable: false, ignore: true },
       ],
-      transactions: [],
     };
   },
   methods: {
@@ -45,7 +44,6 @@ export default {
       this.$api
         .post("transactions/", item)
         .then(() => {
-          this.refreshData();
           this.$emit("reload");
         })
         .catch((error) => {
@@ -56,7 +54,6 @@ export default {
       this.$api
         .put("transactions/" + item.id + "/", item)
         .then(() => {
-          this.refreshData();
           this.$emit("reload");
         })
         .catch((error) => {
@@ -65,23 +62,9 @@ export default {
     },
     deleteItem(item) {
       this.$api.delete("transactions/" + item.id + "/").then(() => {
-        this.refreshData();
         this.$emit("reload");
       });
     },
-    refreshData() {
-      this.$api
-        .get("transactions")
-        .then((response) => {
-          this.transactions = response.data;
-        })
-        .catch((error) => {
-          console.log(error.data);
-        });
-    },
-  },
-  beforeMount: function () {
-    this.refreshData();
   },
 };
 </script>

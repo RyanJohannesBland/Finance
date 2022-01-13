@@ -8,8 +8,12 @@
       <v-tab-item>
         <v-container>
           <transactions
+            :transactions="transactions"
             :categories="categories_options"
-            @reload="loadCategories"
+            @reload="
+              loadTransactions();
+              loadCategories();
+            "
           ></transactions>
         </v-container>
       </v-tab-item>
@@ -18,7 +22,10 @@
           <monthly-budget
             :categories="categories"
             :subcategories="subcategories_options"
-            @reload="loadCategories"
+            @reload="
+              loadSubCategories();
+              loadSubCategories();
+            "
           ></monthly-budget>
         </v-container>
       </v-tab-item>
@@ -61,7 +68,9 @@ export default {
           id: 2,
         },
       ],
+      transactions: [],
       categories: [],
+      subcategories: [],
       categories_options: [],
       subcategories_options: [],
     };
@@ -79,9 +88,12 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    loadSubCategories() {
       this.$api
         .get("subcategories")
         .then((response) => {
+          this.subcategories = response.data;
           this.subcategories_options = {
             subcategory: { pk: "name", options: response.data },
           };
@@ -90,9 +102,21 @@ export default {
           console.log(error);
         });
     },
+    loadTransactions() {
+      this.$api
+        .get("transactions")
+        .then((response) => {
+          this.transactions = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
   mounted: function () {
     this.loadCategories();
+    this.loadTransactions();
+    this.loadSubCategories();
   },
 };
 </script>
