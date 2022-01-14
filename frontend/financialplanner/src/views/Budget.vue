@@ -78,7 +78,7 @@ export default {
   methods: {
     loadCategories() {
       this.$api
-        .get("categories")
+        .get("categories/")
         .then((response) => {
           this.categories = response.data;
           this.categories_options = {
